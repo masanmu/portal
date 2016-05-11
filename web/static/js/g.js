@@ -49,8 +49,7 @@ function handle_quietly(json, f) {
 // - business function -
 function query_user() {
     var query = $.trim($("#query").val());
-    var mine = document.getElementById('mine').checked ? 1 : 0;
-    window.location.href = '/?q=' + query + '&mine=' + mine;
+    window.location.href = '/?q=' + query;
 }
 
 function create_group() {
