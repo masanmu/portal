@@ -12,9 +12,10 @@ def home_get():
     page = int(request.args.get('p', 1))
     limit = int(request.args.get('limit', 10))
     query = request.args.get('q', '').strip()
-    mine = request.args.get('mine', '1')
-    me = g.user_name if mine == '1' else None
-    vs, total = HostGroup.query(page, limit, query, me)
+    me = g.user_name
+    team = HostGroup.query_team(me)
+    create_user_team = ','.join(team)
+    vs, total = HostGroup.query(page, limit, query, me,create_user_team)
     return render_template(
         'group/index.html',
         data={
@@ -23,9 +24,10 @@ def home_get():
             'query': query,
             'limit': limit,
             'page': page,
-            'mine': mine,
             'is_root': g.user_name in config.MAINTAINERS,
             'community': config.COMMUNITY,
         }
     )
+
+
 
