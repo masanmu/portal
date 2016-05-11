@@ -4,12 +4,19 @@ __author__ = 'Ulric Qin'
 # -- app config --
 DEBUG = True
 
-# -- db config --
-DB_HOST = "127.0.0.1"
-DB_PORT = 3306
-DB_USER = "root"
-DB_PASS = ""
-DB_NAME = "falcon_portal"
+# -- portal db config --
+PORTAL_DB_HOST = "127.0.0.1"
+PORTAL_DB_PORT = 3306
+PORTAL_DB_USER = "root"
+PORTAL_DB_PASS = ""
+PORTAL_DB_NAME = "falcon_portal"
+
+# -- uic db config
+UIC_DB_HOST = "127.0.0.1"
+UIC_DB_PORT = 3306
+UIC_DB_USER = "root"
+UIC_DB_PASS = ""
+UIC_DB_NAME = "uic"
 
 # -- cookie config --
 SECRET_KEY = "4e.5tyg8-u9ioj"
