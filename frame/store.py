@@ -8,14 +8,25 @@ from frame import config
 
 def connect_db(cfg):
     try:
-        conn = MySQLdb.connect(
-            host=cfg.DB_HOST,
-            port=cfg.DB_PORT,
-            user=cfg.DB_USER,
-            passwd=cfg.DB_PASS,
-            db=cfg.DB_NAME,
-            use_unicode=True,
-            charset="utf8")
+       if db_name == None:
+            conn = MySQLdb.connect(
+                host=cfg.PORTAL_DB_HOST,
+                port=cfg.PORTAL_DB_PORT,
+                user=cfg.PORTAL_DB_USER,
+                passwd=cfg.PORTAL_DB_PASS,
+                db=cfg.PORTAL_DB_NAME,
+                use_unicode=True,
+                charset="utf8")
+        else:
+            conn = MySQLdb.connect(
+                host=cfg.UIC_DB_HOST,
+                port=cfg.UIC_DB_PORT,
+                user=cfg.UIC_DB_USER,
+                passwd=cfg.UIC_DB_PASS,
+                db=cfg.UIC_DB_NAME,
+                use_unicode=True,
+                charset="utf8")
+
         return conn
     except Exception, e:
         logging.getLogger().critical('connect db: %s' % e)
