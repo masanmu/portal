@@ -33,6 +33,7 @@ class HostGroup(Bean):
                 team = 'open-falcon-test' if len(team)==0 else team
                 params.append('%'+team+'%')
         where=where[0:-3]
+        where = '('+where+')'
         if query:
             where += ' and ' if where else ''
             where += 'grp_name like %s'
