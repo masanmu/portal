@@ -1,3 +1,5 @@
+加入用户组权限,需要更显falcon-portal库,添加create-user-team
+
 falcon portal
 ============
 
@@ -31,6 +33,5 @@ falcon portal
     
     --> goto http://127.0.0.1:5050
 
-##添加用户组权限
 
 
