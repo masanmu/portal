@@ -1,4 +1,4 @@
-加入用户组权限,需要更显falcon-portal库,添加create-user-team
+加入用户组权限,需要更显falcon-portal库,添加create-user-team字段
 
 falcon portal
 ============
