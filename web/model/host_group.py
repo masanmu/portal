@@ -25,14 +25,17 @@ class HostGroup(Bean):
 
         return False
 
-    def query_user_team(self,create_user):
+    @classmethod
+    def query_user_team(cls,create_user):
         rows = uic_db_conn.query_all("select a.tid from rel_team_user as a,user as b where b.name = '%s' and a.uid = b.id" % create_user)
         tid = []
         for id in rows:
             tid.append(id[0])
+        uic_db_conn.close()
         return tid
 
-    def query_user_in_team(self,user_team_id):
+    @classmethod
+    def query_user_in_team(cls,user_team_id):
         sql = 'select uid from rel_team_user where'
         for id in user_team_id:
             sql += ' tid = %s or' % id
@@ -41,9 +44,11 @@ class HostGroup(Bean):
         uid = []
         for id in rows:
             uid.append(id[0])
+        uic_db_conn.close()
         return uid
 
-    def query_user_name_by_id(self,user_id):
+    @classmethod
+    def query_user_name_by_id(cls,user_id):
         sql = 'select name from user where'
         for id in user_id:
             sql += ' id = %s or' % id
@@ -52,6 +57,7 @@ class HostGroup(Bean):
         user_name = []
         for name in rows:
             user_name.append(name[0])
+        uic_db_conn.close()
         return user_name
 
     @classmethod
@@ -59,13 +65,17 @@ class HostGroup(Bean):
         where = ''
         params = []
         user_team_id = cls.query_user_team(me)
-        user_id = cls.query_user_in_team(user_team_id)
-        user_name = cls.query_user_name_by_id(user_id)
-        for name in user_name:
-            where += ' or ' if where else '('
-            where += 'create_user = %s'
-            params.append(name)
-        where += ')'
+        if len(user_team_id) == 0:
+            where = 'create_user = %s'
+            params = [me]
+        else:
+            user_id = cls.query_user_in_team(user_team_id)
+            user_name = cls.query_user_name_by_id(user_id)
+            for name in user_name:
+                where += ' or ' if where else '('
+                where += 'create_user = %s'
+                params.append(name)
+            where += ')'
 
         if query:
             where += ' and ' if where else ''

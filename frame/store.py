@@ -35,6 +35,10 @@ class DB(object):
         if self.conn is None:
             self.conn = connect_db(self.host,self.port,self.user,self.passwd,self.db)
         return self.conn
+    
+    def close(self):
+        self.conn and self.conn.close()
+        self.conn = None
 
     def execute(self, *a, **kw):
         cursor = kw.pop('cursor', None)
