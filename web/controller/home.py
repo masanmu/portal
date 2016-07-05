@@ -13,9 +13,7 @@ def home_get():
     limit = int(request.args.get('limit', 10))
     query = request.args.get('q', '').strip()
     me = g.user_name
-    team = HostGroup.query_team(me)
-    create_user_team = ','.join(team)
-    vs, total = HostGroup.query(page, limit, query, me,create_user_team)
+    vs, total = HostGroup.query(page, limit, query, me)
     return render_template(
         'group/index.html',
         data={
@@ -28,6 +26,4 @@ def home_get():
             'community': config.COMMUNITY,
         }
     )
-
-
 

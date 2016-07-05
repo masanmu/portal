@@ -40,16 +40,14 @@
                     <a href="{{ url_for('plugin_list_get', group_id=v.id) }}">plugins</a>
                     <span class="cut-line">¦</span>
                     <a href="{{ url_for('cluster_list_get', group_id=v.id) }}">aggregator</a>
-                    {% if v.writable(g.user_name) %}
-                        <span class="cut-line">¦</span>
-                        <a href="javascript:edit_group('{{ v.id }}', '{{ v.grp_name }}');" style="text-decoration: none;">
-                            <span class="glyphicon glyphicon-edit orange"></span>
-                        </a>
-                        <span class="cut-line">¦</span>
-                        <a href="javascript:delete_group('{{ v.id }}');" style="text-decoration: none;">
-                            <span class="glyphicon glyphicon-trash orange"></span>
-                        </a>
-                    {% endif %}
+                    <span class="cut-line">¦</span>
+                    <a href="javascript:edit_group('{{ v.id }}', '{{ v.grp_name }}');" style="text-decoration: none;">
+                        <span class="glyphicon glyphicon-edit orange"></span>
+                    </a>
+                    <span class="cut-line">¦</span>
+                    <a href="javascript:delete_group('{{ v.id }}');" style="text-decoration: none;">
+                        <span class="glyphicon glyphicon-trash orange"></span>
+                    </a>
                 </td>
             </tr>
         {% else %}

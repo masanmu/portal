@@ -37,7 +37,6 @@ def before_request():
     for ignore_pre in IGNORE_PREFIX:
         if p.startswith(ignore_pre):
             return
-
     if 'user_name' in session and session['user_name']:
         g.user_name = session['user_name']
     else:

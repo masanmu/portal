@@ -3,7 +3,7 @@ __author__ = 'Ulric Qin'
 from .bean import Bean
 from frame.config import MAINTAINERS
 from frame.store import db
-
+from frame.store import uic_db_conn
 
 class HostGroup(Bean):
     _tbl = 'grp'
@@ -17,61 +17,72 @@ class HostGroup(Bean):
         self.come_from = come_from
 
     def writable(self, login_user):
-        if self.create_user == login_user or login_user in MAINTAINERS:
+        user_team_id = self.query_user_team(login_user)
+        user_id = self.query_user_in_team(user_team_id)
+        user_name = self.query_user_name_by_id(user_id)
+        if self.create_user in user_name or login_user in MAINTAINERS:
             return True
 
         return False
-        @classmethod
-    def query(cls, page, limit, query, me, create_user_team=None):
+
+    def query_user_team(self,create_user):
+        rows = uic_db_conn.query_all("select a.tid from rel_team_user as a,user as b where b.name = '%s' and a.uid = b.id" % create_user)
+        tid = []
+        for id in rows:
+            tid.append(id[0])
+        return tid
+
+    def query_user_in_team(self,user_team_id):
+        sql = 'select uid from rel_team_user where'
+        for id in user_team_id:
+            sql += ' tid = %s or' % id
+        sql += ' tid = ""'
+        rows = uic_db_conn.query_all(sql)
+        uid = []
+        for id in rows:
+            uid.append(id[0])
+        return uid
+
+    def query_user_name_by_id(self,user_id):
+        sql = 'select name from user where'
+        for id in user_id:
+            sql += ' id = %s or' % id
+        sql += ' id = ""'
+        rows = uic_db_conn.query_all(sql)
+        user_name = []
+        for name in rows:
+            user_name.append(name[0])
+        return user_name
+
+    @classmethod
+    def query(cls, page, limit, query, me=None):
         where = ''
         params = []
-        create_user_team = ','.join(cls.query_team(me))
-        cls.update_team(create_user_team,me)
-        if create_user_team is not None:
-            for team in create_user_team.split(','):
-                where += 'create_user_team like %s or '
-                team = 'open-falcon-test' if len(team)==0 else team
-                params.append('%'+team+'%')
-        where=where[0:-3]
-        where = '('+where+')'
+        user_team_id = cls.query_user_team(me)
+        user_id = cls.query_user_in_team(user_team_id)
+        user_name = cls.query_user_name_by_id(user_id)
+        for name in user_name:
+            where += ' or ' if where else '('
+            where += 'create_user = %s'
+            params.append(name)
+        where += ')'
+
         if query:
             where += ' and ' if where else ''
             where += 'grp_name like %s'
             params.append('%' + query + '%')
+
         vs = cls.select_vs(where=where, params=params, page=page, limit=limit, order='grp_name')
         total = cls.total(where, params)
         return vs, total
+    
     @classmethod
-    def update_team(cls,create_user_team,user_name):
-        clause = 'create_user_team = %s where create_user = %s'
-        params = [create_user_team,user_name]
-        cls.update(clause=clause,params=params)
-
-    @classmethod
-    def query_team(cls,user_name):
-        team = []
-        conn = connect_db(config,db_name = 'uic')
-        cursor = conn.cursor()
-        cursor.execute("select id from user where name = '%s'" % user_name)
-        id = cursor.fetchall()[0][0]
-        cursor.execute("select tid from rel_team_user where uid = %s" % id)
-        tid = cursor.fetchall()
-        for id in tid:
-            cursor.execute("select name from team where id = %s" % id[0])
-            team.append(cursor.fetchall()[0][0])
-        cursor.close()
-        conn.close()
-        return team
-
-
-    @classmethod
-    def create(cls, grp_name, user_name, create_user_team, come_from):
+    def create(cls, grp_name, user_name, come_from):
         # check duplicate grp_name
         if cls.column('id', where='grp_name = %s', params=[grp_name]):
             return -1
-        create_user_team = ','.join(create_user_team)
-        return cls.insert({'grp_name': grp_name, 'create_user': user_name, 'create_user_team' : create_user_team,'come_from': come_from})
 
+        return cls.insert({'grp_name': grp_name, 'create_user': user_name, 'come_from': come_from})
 
     @classmethod
     def all_group_dict(cls):

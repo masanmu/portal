@@ -399,7 +399,7 @@ function make_select2_for_template(selector) {
 
 function make_select2_for_metric(selector) {
     $(selector).select2({
-        placeholder: "监控项名，如:df.bytes.free.percent",
+        placeholder: "input metric",
         allowClear: true,
         quietMillis: 100,
         minimumInputLength: 2,
@@ -430,15 +430,6 @@ function make_select2_for_metric(selector) {
         },
         formatSelection: function (obj) {
             return obj.name
-        }
-    });
-    $(selector).on("change", function (e) { 
-        var val = $('#metric').val(); 
-        var i=val.indexOf('/');
-        if(i > 0){
-            $('#metric').val(val.substring(0,i));
-            $('#select2-chosen-4').text(val.substring(0,i));
-            $('#tags').val(val.substr(i+1));
         }
     });
 }
@@ -508,7 +499,6 @@ function clone_strategy(sid) {
 function modify_strategy(sid) {
     $("#current_sid").val(sid);
     fill_fields(sid);
-    $('[data-toggle="tooltip"]').tooltip();
 }
 
 function fill_fields(sid) {

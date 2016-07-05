@@ -12,12 +12,10 @@ from frame.config import UIC_ADDRESS
 @app.route('/group/create', methods=['POST'])
 def group_create_post():
     grp_name = request.form['grp_name'].strip()
-    create_user_team = HostGroup.query_team(g.user_name)
-    logging.debug(create_user_team)
     if not grp_name:
         return jsonify(msg="group name is blank")
 
-    grp_id = HostGroup.create(grp_name, g.user_name, create_user_team, 1)
+    grp_id = HostGroup.create(grp_name, g.user_name, 1)
     if grp_id > 0:
         return jsonify(msg='')
     else:

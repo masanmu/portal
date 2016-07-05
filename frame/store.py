@@ -6,27 +6,16 @@ import MySQLdb
 from frame import config
 
 
-def connect_db(cfg):
+def connect_db(host,port,user,passwd,db):
     try:
-       if db_name == None:
-            conn = MySQLdb.connect(
-                host=cfg.PORTAL_DB_HOST,
-                port=cfg.PORTAL_DB_PORT,
-                user=cfg.PORTAL_DB_USER,
-                passwd=cfg.PORTAL_DB_PASS,
-                db=cfg.PORTAL_DB_NAME,
-                use_unicode=True,
-                charset="utf8")
-        else:
-            conn = MySQLdb.connect(
-                host=cfg.UIC_DB_HOST,
-                port=cfg.UIC_DB_PORT,
-                user=cfg.UIC_DB_USER,
-                passwd=cfg.UIC_DB_PASS,
-                db=cfg.UIC_DB_NAME,
-                use_unicode=True,
-                charset="utf8")
-
+        conn = MySQLdb.connect(
+            host=host,
+            port=port,
+            user=user,
+            passwd=passwd,
+            db=db,
+            use_unicode=True,
+            charset="utf8")
         return conn
     except Exception, e:
         logging.getLogger().critical('connect db: %s' % e)
@@ -34,13 +23,17 @@ def connect_db(cfg):
 
 
 class DB(object):
-    def __init__(self, cfg):
-        self.config = cfg
-        self.conn = None
+    def __init__(self, host,port,user,passwd,db):
+        self.host = host
+        self.port = port
+        self.user = user
+        self.passwd = passwd
+        self.db = db
+        self.conn = connect_db(host,port,user,passwd,db)
 
     def get_conn(self):
         if self.conn is None:
-            self.conn = connect_db(self.config)
+            self.conn = connect_db(self.host,self.port,self.user,self.passwd,self.db)
         return self.conn
 
     def execute(self, *a, **kw):
@@ -120,4 +113,15 @@ class DB(object):
                 self.conn = None
 
 
-db = DB(config)
+db = DB(
+        config.PORTAL_DB_HOST,
+        config.PORTAL_DB_PORT,
+        config.PORTAL_DB_USER,
+        config.PORTAL_DB_PASS,
+        config.PORTAL_DB_NAME)
+uic_db_conn = DB(
+        config.UIC_DB_HOST,
+        config.UIC_DB_PORT,
+        config.UIC_DB_USER,
+        config.UIC_DB_PASS,
+        config.UIC_DB_NAME)
