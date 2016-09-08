@@ -30,6 +30,7 @@ UIC_ADDRESS = {
 
 UIC_TOKEN = ''
 
+MARATHON_ADDRESS="http://127.0.0.1:8080"
 MAINTAINERS = ['root']
 CONTACT = 'ulric.qin@gmail.com'
 

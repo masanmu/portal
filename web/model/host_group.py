@@ -93,6 +93,12 @@ class HostGroup(Bean):
             return -1
 
         return cls.insert({'grp_name': grp_name, 'create_user': user_name, 'come_from': come_from})
+    @classmethod
+    def query_grp_id(cls,grp_name):
+        grp_id = cls.column('id', where='grp_name = %s', params=[grp_name])
+        if len(grp_id)<=0:
+            grp_id = -1
+        return grp_id
 
     @classmethod
     def all_group_dict(cls):
